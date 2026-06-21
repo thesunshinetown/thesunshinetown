@@ -1,36 +1,97 @@
-name: Update local news
+"""
+update_news.py
 
-# Runs once a day, plus lets you trigger it manually from the Actions tab.
-on:
-  schedule:
-    - cron: "0 11 * * *"   # 11:00 UTC ≈ 6-7am Eastern, adjust if you like
-  workflow_dispatch: {}
+Starter script to refresh news.json from local RSS feeds.
+Run this daily via a cron job (or a scheduled GitHub Action / Render cron job)
+on whatever server hosts the site.
 
-permissions:
-  contents: write   # needed so the workflow can commit news.json back
+Setup:
+    pip install feedparser
 
-jobs:
-  update-news:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repo
-        uses: actions/checkout@v4
+Usage:
+    python update_news.py
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+This pulls the most recent items from the FEEDS list below, keeps only a
+handful of the freshest ones, and overwrites news.json in this same folder.
+Edit FEEDS to point at whichever local sources you have permission to pull from
+(town announcements, local paper RSS feeds, etc). Always check a feed's terms
+of use before pulling it automatically.
+"""
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+import json
+import datetime
+import feedparser
 
-      - name: Run update script
-        run: python update_news.py
+FEEDS = [
+    # Google News RSS search feeds are far more reliable than guessing at a
+    # specific outlet's feed URL -- this one pulls any recent coverage
+    # mentioning Newport, NH from across the web.
+    "https://news.google.com/rss/search?q=%22Newport%2C+NH%22+OR+%22Newport%2C+New+Hampshire%22&hl=en-US&gl=US&ceid=US:en",
 
-      - name: Commit updated news.json
-        run: |
-          git config user.name "sunshinetown-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add news.json
-          git diff --quiet --cached || git commit -m "Daily news update"
-          git push
+    # A second feed focused on the wider Sullivan County area, in case the
+    # first one comes up thin on any given day.
+    "https://news.google.com/rss/search?q=%22Sullivan+County%22+New+Hampshire&hl=en-US&gl=US&ceid=US:en",
+]
+
+# Optional: simple keyword filter so a broader feed doesn't drift off-topic.
+# Leave empty (KEYWORD_FILTER = []) to disable filtering entirely.
+KEYWORD_FILTER = []
+
+MAX_ITEMS = 12
+
+
+def pull_feed(url):
+    parsed = feedparser.parse(url)
+    items = []
+    source_name = parsed.feed.get("title", url)
+    for entry in parsed.entries[:15]:
+        title = entry.get("title", "Untitled")
+        summary = (entry.get("summary", "") or "")[:280]
+        haystack = (title + " " + summary).lower()
+
+        if KEYWORD_FILTER and not any(kw in haystack for kw in KEYWORD_FILTER):
+            continue
+
+        items.append({
+            "date": entry.get("published", "")[:16] or datetime.date.today().isoformat(),
+            "source": source_name,
+            "headline": title,
+            "summary": summary,
+            "link": entry.get("link", ""),
+        })
+        if len(items) >= 5:
+            break
+    return items
+
+
+def main():
+    all_items = []
+    for feed_url in FEEDS:
+        try:
+            all_items.extend(pull_feed(feed_url))
+        except Exception as e:
+            print(f"Skipped {feed_url}: {e}")
+
+    all_items = all_items[:MAX_ITEMS]
+
+    output = {
+        "updated": datetime.date.today().isoformat(),
+        "items": all_items if all_items else [
+            {
+                "date": datetime.date.today().isoformat(),
+                "source": "system",
+                "headline": "No feeds configured yet",
+                "summary": "Add RSS feed URLs to the FEEDS list in update_news.py.",
+                "link": "",
+            }
+        ],
+    }
+
+    with open("news.json", "w") as f:
+        json.dump(output, f, indent=2)
+
+    print(f"Wrote {len(output['items'])} items to news.json")
+
+
+if __name__ == "__main__":
+    main()
