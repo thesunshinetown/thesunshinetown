@@ -1,0 +1,33 @@
+{
+  "updated": "2026-06-21",
+  "events": [
+    {
+      "date": "2026-06-27",
+      "time": "6:00 PM",
+      "title": "Summer Concert on the Common",
+      "location": "Newport Town Common",
+      "category": "Music"
+    },
+    {
+      "date": "2026-07-04",
+      "time": "10:00 AM",
+      "title": "Independence Day Parade",
+      "location": "Main Street",
+      "category": "Town"
+    },
+    {
+      "date": "2026-07-11",
+      "time": "9:00 AM",
+      "title": "Farmers Market",
+      "location": "Newport Town Common",
+      "category": "Market"
+    },
+    {
+      "date": "2026-08-14",
+      "time": "All day",
+      "title": "Newport History Day at the Historical Society",
+      "location": "Newport Historical Society",
+      "category": "History"
+    }
+  ]
+}

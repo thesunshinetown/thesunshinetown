@@ -1,0 +1,19 @@
+{
+  "updated": "2026-06-21",
+  "items": [
+    {
+      "date": "2026-06-21",
+      "source": "Sample entry",
+      "headline": "Replace this with today's local headline",
+      "summary": "This is placeholder text. Edit news.json (or run the update script) to replace these entries with real, current local stories.",
+      "link": "https://www.eagletimes.com/"
+    },
+    {
+      "date": "2026-06-20",
+      "source": "Sample entry",
+      "headline": "Town Selectboard meeting recap",
+      "summary": "Placeholder summary — swap in a short, original write-up of the actual meeting once you have a real source.",
+      "link": ""
+    }
+  ]
+}
