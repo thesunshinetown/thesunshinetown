@@ -23,19 +23,19 @@ import datetime
 import feedparser
 
 FEEDS = [
-    # The Eagle Times covers Claremont, Newport, and the rest of Sullivan
-    # County. Verify this still resolves before relying on it long-term --
-    # feed URLs change when sites get redesigned.
-    "https://www.eagletimes.com/feed/",
+    # Google News RSS search feeds are far more reliable than guessing at a
+    # specific outlet's feed URL -- this one pulls any recent coverage
+    # mentioning Newport, NH from across the web.
+    "https://news.google.com/rss/search?q=%22Newport%2C+NH%22+OR+%22Newport%2C+New+Hampshire%22&hl=en-US&gl=US&ceid=US:en",
 
-    # NH Union Leader's general feed (statewide, but often carries Sullivan
-    # County stories). Swap for a more specific section feed if you find one.
-    "https://www.unionleader.com/news/rss/",
+    # A second feed focused on the wider Sullivan County area, in case the
+    # first one comes up thin on any given day.
+    "https://news.google.com/rss/search?q=%22Sullivan+County%22+New+Hampshire&hl=en-US&gl=US&ceid=US:en",
 ]
 
-# Optional: simple keyword filter so a statewide feed (like Union Leader's)
-# doesn't flood the page with unrelated stories. Leave empty to disable.
-KEYWORD_FILTER = ["newport", "sullivan county", "sugar river", "claremont"]
+# Optional: simple keyword filter so a broader feed doesn't drift off-topic.
+# Leave empty (KEYWORD_FILTER = []) to disable filtering entirely.
+KEYWORD_FILTER = []
 
 MAX_ITEMS = 12
 
