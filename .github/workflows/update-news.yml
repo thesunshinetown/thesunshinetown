@@ -1,0 +1,36 @@
+name: Update local news
+
+# Runs once a day, plus lets you trigger it manually from the Actions tab.
+on:
+  schedule:
+    - cron: "0 11 * * *"   # 11:00 UTC ≈ 6-7am Eastern, adjust if you like
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # needed so the workflow can commit news.json back
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run update script
+        run: python update_news.py
+
+      - name: Commit updated news.json
+        run: |
+          git config user.name "sunshinetown-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add news.json
+          git diff --quiet --cached || git commit -m "Daily news update"
+          git push
