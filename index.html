@@ -256,7 +256,6 @@
     <a href="#history">History</a>
     <a href="#events">Events</a>
     <a href="#news">Local News</a>
-    <a href="#about">About this site</a>
   </div>
 </nav>
 
@@ -317,23 +316,6 @@
     </div>
     <div id="news-status">Loading news…</div>
     <div class="news-list" id="news-list"></div>
-  </div>
-</section>
-
-<!-- ABOUT / HOW TO UPDATE -->
-<section id="about" class="alt">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="eyebrow">For the site owner</span>
-      <h2>Keeping this page current</h2>
-      <p>This page reads two small files — <code>events.json</code> and <code>news.json</code> — at load time. Editing those files is all it takes to update the site; no code changes needed.</p>
-    </div>
-    <div class="history-prose">
-      <p><strong>Manual updates (simplest):</strong> open <code>events.json</code> or <code>news.json</code> in any text editor, add an entry following the existing format, and re-upload to your host. Takes a couple of minutes a day.</p>
-      <p><strong>Semi-automated:</strong> put the data in a Google Sheet instead, publish it as JSON (or use a free tool like Sheet.best), and point the fetch calls at that URL. You update a spreadsheet; the page reflects it within seconds.</p>
-      <p><strong>Fully automated:</strong> run a small script on a daily schedule (a cron job, or a free scheduled job on Render/GitHub Actions) that pulls headlines from local RSS feeds — e.g. the Eagle Times, NH Union Leader's Sullivan County coverage, the Town of Newport's official announcements — and rewrites <code>news.json</code> automatically. A starter Python script for this is included with the site files.</p>
-      <p>This site is currently a static page. For full automation you'll need real hosting (not just a flat file) — see the README included with these files for specific options and rough costs.</p>
-    </div>
   </div>
 </section>
 
