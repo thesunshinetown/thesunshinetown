@@ -20,6 +20,7 @@ of use before pulling it automatically.
 
 import json
 import datetime
+import re
 import feedparser
 
 FEEDS = [
@@ -38,24 +39,46 @@ FEEDS = [
 KEYWORD_FILTER = ["newport"]
 
 # Items get dropped if they look like classifieds, car listings, or other
-# non-news content that sometimes slips into broad search feeds.
+# non-news content that sometimes slips into broad search feeds. Google News
+# titles end in " - PublisherName", so publisher names belong here too --
+# that's the only reliable way to catch them, since feedparser doesn't
+# consistently expose a separate machine-readable source field for this feed.
 BLOCKLIST = [
     "for sale", "used cars", "car for sale", "vehicles for sale",
     "mpg", "dealership", "lease deal", "$", "price drop",
     "shop now", "coupon", "promo code", "% off",
+    "realtor.com", "zillow", "redfin", "trulia", "homes.com",
+    "cars.com", "autotrader", "carfax", "the weather channel",
 ]
 
 MAX_ITEMS = 12
 
 
+def clean_summary(raw):
+    """Google News summaries are HTML snippets (an <a> tag plus a trailing
+    <font> tag wrapper). Strip all tags and collapse whitespace."""
+    text = re.sub(r"<[^>]+>", "", raw or "")
+    text = text.replace("&nbsp;", " ")
+    return re.sub(r"\s+", " ", text).strip()[:280]
+
+
+def split_publisher(title):
+    """Google News titles are formatted 'Headline - Publisher'. Split on the
+    last ' - ' so multi-word headlines with hyphens aren't broken early."""
+    if " - " in title:
+        headline, publisher = title.rsplit(" - ", 1)
+        return headline.strip(), publisher.strip()
+    return title.strip(), ""
+
+
 def pull_feed(url):
     parsed = feedparser.parse(url)
     items = []
-    source_name = parsed.feed.get("title", url)
+    feed_title = parsed.feed.get("title", url)
     for entry in parsed.entries[:15]:
-        title = entry.get("title", "Untitled")
-        summary = (entry.get("summary", "") or "")[:280]
-        haystack = (title + " " + summary).lower()
+        raw_title = entry.get("title", "Untitled")
+        raw_summary = entry.get("summary", "")
+        haystack = (raw_title + " " + raw_summary).lower()
 
         if KEYWORD_FILTER and not any(kw in haystack for kw in KEYWORD_FILTER):
             continue
@@ -63,11 +86,13 @@ def pull_feed(url):
         if BLOCKLIST and any(bad in haystack for bad in BLOCKLIST):
             continue
 
+        headline, publisher = split_publisher(raw_title)
+
         items.append({
             "date": entry.get("published", "")[:16] or datetime.date.today().isoformat(),
-            "source": source_name,
-            "headline": title,
-            "summary": summary,
+            "source": publisher or feed_title,
+            "headline": headline,
+            "summary": clean_summary(raw_summary),
             "link": entry.get("link", ""),
         })
         if len(items) >= 5:
