@@ -33,9 +33,17 @@ FEEDS = [
     "https://news.google.com/rss/search?q=%22Sullivan+County%22+New+Hampshire&hl=en-US&gl=US&ceid=US:en",
 ]
 
-# Optional: simple keyword filter so a broader feed doesn't drift off-topic.
-# Leave empty (KEYWORD_FILTER = []) to disable filtering entirely.
-KEYWORD_FILTER = []
+# Items must mention the town/area to be kept (cheap relevance check).
+# Leave empty to disable.
+KEYWORD_FILTER = ["newport"]
+
+# Items get dropped if they look like classifieds, car listings, or other
+# non-news content that sometimes slips into broad search feeds.
+BLOCKLIST = [
+    "for sale", "used cars", "car for sale", "vehicles for sale",
+    "mpg", "dealership", "lease deal", "$", "price drop",
+    "shop now", "coupon", "promo code", "% off",
+]
 
 MAX_ITEMS = 12
 
@@ -50,6 +58,9 @@ def pull_feed(url):
         haystack = (title + " " + summary).lower()
 
         if KEYWORD_FILTER and not any(kw in haystack for kw in KEYWORD_FILTER):
+            continue
+
+        if BLOCKLIST and any(bad in haystack for bad in BLOCKLIST):
             continue
 
         items.append({
