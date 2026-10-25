@@ -4,35 +4,83 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Sunshine Town — Newport, New Hampshire</title>
-<meta name="description" content="History, events, and local news for Newport, New Hampshire — the Sunshine Town on the Sugar River.">
+<meta name="description" content="History, events, weather, and local news for Newport, New Hampshire — the Sunshine Town on the Sugar River.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,560;9..144,680&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
 <style>
+  /* ---------- SEASONAL THEMES (set by script from today's date) ---------- */
   :root{
     --ink:#241F1C;
-    --parchment:#F4ECD8;
-    --parchment-2:#ECE1C6;
-    --maple:#8C3B2E;
-    --maple-dark:#6E2C22;
-    --gold:#D9A02B;
-    --gold-light:#F1C766;
+    --parchment:#F6EAD2;
+    --parchment-2:#EFDFBF;
+    --maple:#A63D2A;
+    --maple-dark:#7A2B1E;
+    --gold:#E0902B;
+    --gold-light:#F4C46B;
+    --hero-top:#FBE3B8;
     --river:#3F5A63;
     --pine:#43543B;
-    --line: rgba(36,31,28,0.15);
+    --line:rgba(36,31,28,0.15);
+    --particle:#C8501F;
   }
+  [data-season="winter"]{
+    --ink:#1F2A33;
+    --parchment:#F1F5F7;
+    --parchment-2:#E2EAEF;
+    --maple:#2F6E94;
+    --maple-dark:#1F4A66;
+    --gold:#8DB8D0;
+    --gold-light:#CFE3EE;
+    --hero-top:#DCE9F2;
+    --river:#3A5560;
+    --pine:#3C5A55;
+    --line:rgba(31,42,51,0.16);
+    --particle:#FFFFFF;
+  }
+  [data-season="spring"]{
+    --ink:#232A1F;
+    --parchment:#F7F5E6;
+    --parchment-2:#ECEBD0;
+    --maple:#4C7F3A;
+    --maple-dark:#34602A;
+    --gold:#E6C440;
+    --gold-light:#F3E391;
+    --hero-top:#F0F5CF;
+    --river:#3F6560;
+    --pine:#43643B;
+    --line:rgba(35,42,31,0.15);
+    --particle:#F2A7C0;
+  }
+  [data-season="summer"]{
+    --ink:#2A2118;
+    --parchment:#FCF4DC;
+    --parchment-2:#F5E8BF;
+    --maple:#B8501B;
+    --maple-dark:#8C3A12;
+    --gold:#F2B01E;
+    --gold-light:#FFD866;
+    --hero-top:#FFEDA8;
+    --river:#2F5F73;
+    --pine:#4A6A3A;
+    --line:rgba(42,33,24,0.15);
+    --particle:#FFE27A;
+  }
+
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;scroll-padding-top:56px;}
   body{
     margin:0;
     background:var(--parchment);
     color:var(--ink);
     font-family:'Inter',sans-serif;
     line-height:1.55;
+    transition:background .6s ease;
   }
   a{color:var(--maple-dark);text-decoration:none;}
   a:hover{text-decoration:underline;}
-  h1,h2,h3{font-family:'Fraunces',serif;margin:0;}
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0;line-height:1.15;}
   .eyebrow{
     font-family:'JetBrains Mono',monospace;
     font-size:0.72rem;
@@ -42,61 +90,122 @@
   }
   .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
 
-  /* ---------- HERO / MASTHEAD ---------- */
+  /* ---------- MASTHEAD ---------- */
   header.masthead{
     position:relative;
-    background:linear-gradient(180deg,#FCEFC9 0%, var(--parchment) 60%);
+    background:linear-gradient(180deg,var(--hero-top) 0%, var(--parchment) 78%);
     border-bottom:4px solid var(--ink);
     overflow:hidden;
   }
   .sunburst{
     position:absolute;
-    top:-180px; left:50%;
-    width:900px; height:900px;
-    transform:translateX(-50%);
+    top:-260px; left:50%;
+    width:980px; height:980px;
+    margin-left:-490px;
     background:repeating-conic-gradient(from 0deg, var(--gold-light) 0deg 4deg, transparent 4deg 12deg);
     border-radius:50%;
-    opacity:0.55;
-    filter:blur(0.3px);
+    opacity:0.6;
     pointer-events:none;
+    animation:spin 160s linear infinite;
+    -webkit-mask-image:radial-gradient(circle, #000 18%, transparent 68%);
+            mask-image:radial-gradient(circle, #000 18%, transparent 68%);
   }
+  .sun-core{
+    position:absolute;
+    top:-90px; left:50%;
+    width:240px; height:240px;
+    margin-left:-120px;
+    border-radius:50%;
+    background:radial-gradient(circle, var(--gold-light) 0%, var(--gold) 38%, transparent 70%);
+    opacity:0.55;
+    pointer-events:none;
+    animation:pulse 7s ease-in-out infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.12);opacity:.72;}}
+
+  /* falling / drifting particles */
+  .particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+  .particle{
+    position:absolute;
+    top:-30px;
+    left:var(--x);
+    width:var(--size);
+    height:var(--size);
+    background:var(--particle);
+    opacity:0;
+    animation:fall var(--dur) linear var(--delay) infinite;
+  }
+  [data-season="fall"] .particle{border-radius:0 100% 0 100%;}
+  [data-season="winter"] .particle{border-radius:50%;filter:blur(.4px);}
+  [data-season="spring"] .particle{border-radius:100% 0 100% 0;}
+  [data-season="summer"] .particle{
+    border-radius:50%;
+    top:auto; bottom:-20px;
+    box-shadow:0 0 10px 3px var(--particle);
+    animation-name:rise;
+  }
+  @keyframes fall{
+    0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0;}
+    8%{opacity:.85;}
+    90%{opacity:.8;}
+    100%{transform:translate3d(var(--drift),460px,0) rotate(540deg);opacity:0;}
+  }
+  @keyframes rise{
+    0%{transform:translate3d(0,0,0);opacity:0;}
+    15%{opacity:.8;}
+    85%{opacity:.6;}
+    100%{transform:translate3d(var(--drift),-420px,0);opacity:0;}
+  }
+
   .masthead-inner{
     position:relative;
-    padding:64px 24px 40px;
+    padding:68px 24px 38px;
     text-align:center;
   }
   .masthead-inner .eyebrow{display:block;margin-bottom:10px;}
   h1.title{
-    font-size:clamp(2.6rem,7vw,5rem);
+    font-size:clamp(2.7rem,7.4vw,5.2rem);
     font-weight:680;
     letter-spacing:-0.01em;
     color:var(--maple-dark);
+    text-shadow:0 2px 0 rgba(255,255,255,.35);
   }
   .tagline{
-    font-size:1.05rem;
+    font-size:1.08rem;
     color:var(--river);
     margin-top:10px;
     font-weight:500;
   }
-  .dateline{
-    margin-top:22px;
+  .masthead-meta{
+    margin-top:24px;
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .chip{
     font-family:'JetBrains Mono',monospace;
     font-size:0.8rem;
     color:var(--ink);
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    padding:8px 0;
-    display:inline-block;
+    background:rgba(255,255,255,.55);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 16px;
+    backdrop-filter:blur(4px);
   }
+  .chip[hidden]{display:none;}
+  .chip b{font-weight:600;}
+
+  /* ---------- NAV ---------- */
   nav.tabs{
-    position:relative;
+    position:sticky;
+    top:0;
+    z-index:20;
     background:var(--ink);
+    box-shadow:0 2px 12px rgba(0,0,0,.18);
   }
-  nav.tabs .wrap{
-    display:flex;
-    gap:4px;
-    flex-wrap:wrap;
-  }
+  nav.tabs .wrap{display:flex;gap:4px;flex-wrap:wrap;}
   nav.tabs a{
     color:var(--parchment);
     font-family:'JetBrains Mono',monospace;
@@ -107,27 +216,54 @@
     display:inline-block;
   }
   nav.tabs a:hover{background:var(--maple-dark);text-decoration:none;}
+  nav.tabs a[hidden]{display:none;}
 
-  /* ---------- RIVER DIVIDER (signature element) ---------- */
-  .river-divider{
-    height:46px;
-    width:100%;
-    display:block;
-  }
+  .river-divider{height:46px;width:100%;display:block;}
+  .river-divider path{fill:var(--river);}
 
   /* ---------- SECTIONS ---------- */
   section{padding:64px 0;}
   section.alt{background:var(--parchment-2);}
-  .section-head{margin-bottom:34px;max-width:640px;}
+  .section-head{margin-bottom:34px;max-width:660px;}
   .section-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin-top:6px;color:var(--maple-dark);}
   .section-head p{color:var(--river);font-size:1rem;}
 
-  /* History */
-  .history-grid{
+  .js .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
+  .js .reveal.in{opacity:1;transform:none;}
+
+  /* From Newport's past card */
+  .past-card{
+    margin:0 0 56px;
     display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:40px;
+    grid-template-columns:auto 1fr;
+    gap:26px;
+    align-items:center;
+    background:var(--ink);
+    color:var(--parchment);
+    border-radius:10px;
+    padding:26px 30px;
+    position:relative;
+    overflow:hidden;
   }
+  .past-card::after{
+    content:'';
+    position:absolute;right:-60px;top:-60px;
+    width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle, var(--gold) 0%, transparent 68%);
+    opacity:.35;
+  }
+  .past-card .yr{
+    font-family:'Fraunces',serif;
+    font-size:clamp(2.4rem,6vw,3.6rem);
+    font-weight:680;
+    color:var(--gold-light);
+    line-height:1;
+  }
+  .past-card .eyebrow{color:var(--gold-light);display:block;margin-bottom:6px;}
+  .past-card p{margin:0;font-size:1.05rem;max-width:62ch;position:relative;z-index:1;}
+
+  /* History */
+  .history-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
   .timeline{border-left:3px solid var(--gold);padding-left:22px;}
   .timeline .event{margin-bottom:22px;position:relative;}
   .timeline .event::before{
@@ -152,27 +288,43 @@
   .events-list{display:flex;flex-direction:column;gap:14px;}
   .event-card{
     display:grid;
-    grid-template-columns: 90px 1fr auto;
+    grid-template-columns:90px 1fr auto;
     gap:18px;
     align-items:center;
     background:var(--parchment);
     border:1px solid var(--line);
     border-left:5px solid var(--gold);
     padding:16px 18px;
-    border-radius:4px;
+    border-radius:6px;
+    transition:transform .2s ease, box-shadow .2s ease;
   }
+  .event-card:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.08);}
+  .event-card.soon{border-left-color:var(--maple);}
   .event-card .when{
     font-family:'JetBrains Mono',monospace;
     text-align:center;
     background:var(--maple-dark);
     color:var(--parchment);
-    border-radius:4px;
+    border-radius:6px;
     padding:8px 4px;
   }
   .event-card .when .mon{display:block;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;}
   .event-card .when .day{display:block;font-size:1.3rem;font-weight:700;}
   .event-card .what h3{font-size:1.05rem;margin-bottom:4px;}
   .event-card .what .meta{color:var(--river);font-size:0.85rem;}
+  .rel{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.66rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    background:var(--maple);
+    color:#fff;
+    padding:2px 8px;
+    border-radius:20px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
   .event-card .tag{
     font-family:'JetBrains Mono',monospace;
     font-size:0.68rem;
@@ -184,6 +336,7 @@
     border-radius:20px;
     white-space:nowrap;
   }
+  .empty-note{color:var(--river);font-size:0.95rem;padding:10px 0;}
 
   /* News */
   .news-list{display:flex;flex-direction:column;}
@@ -191,43 +344,73 @@
     padding:18px 0;
     border-bottom:1px solid var(--line);
     display:grid;
-    grid-template-columns: 110px 1fr;
+    grid-template-columns:130px 1fr;
     gap:18px;
   }
   .news-item:first-child{padding-top:0;}
-  .news-item .ts{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem;
-    color:var(--river);
-  }
+  .news-item .ts{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--river);}
   .news-item h3{font-size:1.08rem;margin-bottom:4px;}
   .news-item p{margin:0 0 8px;color:#3b3530;font-size:0.94rem;}
-  .read-more{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.78rem;
-    font-weight:500;
-    color:var(--maple-dark);
-  }
+  .read-more{font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:500;color:var(--maple-dark);}
   .read-more:hover{text-decoration:underline;}
-  .source-tag{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.68rem;
-    color:var(--maple-dark);
-    text-transform:uppercase;
-  }
-  #news-status, #events-status{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.78rem;
-    color:var(--river);
-    margin-bottom:18px;
-  }
+  .source-tag{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--maple-dark);text-transform:uppercase;}
+  .updated{font-family:'JetBrains Mono',monospace;font-size:0.74rem;color:var(--river);margin-bottom:18px;}
 
-  footer{
-    background:var(--ink);
-    color:var(--parchment-2);
-    padding:36px 0;
-    font-size:0.85rem;
+  /* Gallery */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:14px;
   }
+  .gallery-grid figure{margin:0;position:relative;overflow:hidden;border-radius:8px;background:var(--parchment-2);cursor:zoom-in;aspect-ratio:4/3;}
+  .gallery-grid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
+  .gallery-grid figure:hover img{transform:scale(1.06);}
+  .gallery-grid figcaption{
+    position:absolute;left:0;right:0;bottom:0;
+    padding:26px 12px 10px;
+    font-size:0.82rem;
+    color:#fff;
+    background:linear-gradient(transparent, rgba(0,0,0,.65));
+  }
+  .lightbox{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(15,12,10,.9);
+    display:none;
+    align-items:center;justify-content:center;
+    flex-direction:column;
+    padding:24px;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:min(92vw,1100px);max-height:76vh;border-radius:6px;}
+  .lightbox .cap{color:#f3ead7;margin-top:14px;text-align:center;max-width:70ch;font-size:.95rem;}
+  .lightbox .cap small{display:block;opacity:.7;margin-top:4px;}
+  .lightbox button{
+    position:absolute;background:rgba(255,255,255,.12);color:#fff;border:0;
+    width:44px;height:44px;border-radius:50%;font-size:1.4rem;cursor:pointer;
+  }
+  .lightbox button:hover{background:rgba(255,255,255,.25);}
+  .lb-close{top:18px;right:18px;}
+  .lb-prev{left:18px;top:50%;}
+  .lb-next{right:18px;top:50%;}
+
+  /* Links */
+  .links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+  .link-card{
+    display:block;
+    background:var(--parchment);
+    border:1px solid var(--line);
+    border-top:4px solid var(--gold);
+    border-radius:6px;
+    padding:16px 18px;
+    color:var(--ink);
+    transition:transform .2s ease, box-shadow .2s ease, border-top-color .2s ease;
+  }
+  .link-card:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,.1);border-top-color:var(--maple);text-decoration:none;}
+  .link-card h3{font-size:1.05rem;color:var(--maple-dark);margin-bottom:4px;}
+  .link-card p{margin:0;font-size:.88rem;color:#4a423b;}
+  .link-card span{display:block;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--river);}
+
+  footer{background:var(--ink);color:var(--parchment-2);padding:36px 0;font-size:0.85rem;}
   footer a{color:var(--gold-light);}
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 
@@ -236,6 +419,14 @@
     .event-card{grid-template-columns:70px 1fr;}
     .event-card .tag{grid-column:1/-1;justify-self:start;}
     .news-item{grid-template-columns:1fr;}
+    .past-card{grid-template-columns:1fr;gap:10px;}
+    nav.tabs a{padding:12px 12px;font-size:.72rem;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .sunburst,.sun-core,.particle{animation:none !important;}
+    .particles{display:none;}
+    .js .reveal{opacity:1;transform:none;transition:none;}
+    html{scroll-behavior:auto;}
   }
 </style>
 </head>
@@ -243,11 +434,16 @@
 
 <header class="masthead">
   <div class="sunburst" aria-hidden="true"></div>
+  <div class="sun-core" aria-hidden="true"></div>
+  <div class="particles" id="particles" aria-hidden="true"></div>
   <div class="masthead-inner">
     <span class="eyebrow">Sullivan County · New Hampshire</span>
     <h1 class="title">The Sunshine Town</h1>
     <div class="tagline">Newport, New Hampshire — on the Sugar River since 1761</div>
-    <span class="dateline" id="dateline">Loading today's date…</span>
+    <div class="masthead-meta">
+      <span class="chip" id="dateline">Today</span>
+      <span class="chip" id="weather" hidden></span>
+    </div>
   </div>
 </header>
 
@@ -256,23 +452,34 @@
     <a href="#history">History</a>
     <a href="#events">Events</a>
     <a href="#news">Local News</a>
+    <a href="#gallery" id="nav-gallery" hidden>Gallery</a>
+    <a href="#links">Around Town</a>
   </div>
 </nav>
 
 <svg class="river-divider" viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true">
-  <path d="M0,20 C150,40 300,0 450,20 C600,40 750,0 900,20 C1050,40 1150,10 1200,22 L1200,46 L0,46 Z" fill="#3F5A63" opacity="0.85"/>
-  <path d="M0,28 C150,46 300,10 450,28 C600,46 750,10 900,28 C1050,46 1150,18 1200,30 L1200,46 L0,46 Z" fill="#3F5A63"/>
+  <path d="M0,20 C150,40 300,0 450,20 C600,40 750,0 900,20 C1050,40 1150,10 1200,22 L1200,46 L0,46 Z" opacity="0.85"/>
+  <path d="M0,28 C150,46 300,10 450,28 C600,46 750,10 900,28 C1050,46 1150,18 1200,30 L1200,46 L0,46 Z"/>
 </svg>
 
 <!-- HISTORY -->
 <section id="history">
   <div class="wrap">
-    <div class="section-head">
+
+    <div class="past-card reveal" id="past-card" aria-live="polite">
+      <div class="yr" id="past-year">1753</div>
+      <div>
+        <span class="eyebrow">From Newport's past · changes daily</span>
+        <p id="past-text">Loading…</p>
+      </div>
+    </div>
+
+    <div class="section-head reveal">
       <span class="eyebrow">Est. 1761</span>
       <h2>A mill town shaped by the Sugar River</h2>
       <p>Granted by colonial governor Benning Wentworth and first settled by families from Killingworth, Connecticut, Newport grew from a frontier outpost into a center of New Hampshire's woolen mill industry.</p>
     </div>
-    <div class="history-grid">
+    <div class="history-grid reveal">
       <div class="history-prose">
         <p><span class="cap">N</span>ewport was chartered in 1753 and originally named "Grenville," after a British Prime Minister. War with the French and their Native allies delayed settlement, and it wasn't until the mid-1760s that the first permanent families arrived from Connecticut, clearing land along what would become the town center.</p>
         <p>The Sugar River and its branches gave Newport its industrial edge. Mill owners across the region built a dam to keep water power flowing even through drought, and by the mid-1800s more than a hundred water wheels turned along the river, driving woolen mills, tanneries, and the Sibley Scythe Company — whose tools were used during construction of the Panama Canal.</p>
@@ -296,11 +503,12 @@
 <!-- EVENTS -->
 <section id="events" class="alt">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">What's on</span>
       <h2>Upcoming in Newport</h2>
+      <p>Town meetings, the Friday Farmers Market, concerts, and happenings around town.</p>
     </div>
-    <div id="events-status">Loading events…</div>
+    <div class="updated" id="events-status"></div>
     <div class="events-list" id="events-list"></div>
   </div>
 </section>
@@ -308,75 +516,328 @@
 <!-- NEWS -->
 <section id="news">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">Around town</span>
       <h2>Local news</h2>
+      <p>Fresh headlines from Newport and Sullivan County, each linked to its original publisher.</p>
     </div>
-    <div id="news-status">Loading news…</div>
+    <div class="updated" id="news-status"></div>
     <div class="news-list" id="news-list"></div>
+  </div>
+</section>
+
+<!-- GALLERY (hidden until photos.json has photos) -->
+<section id="gallery" class="alt" hidden>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Picture this</span>
+      <h2>Newport in photos</h2>
+      <p>Tap any photo to see it larger.</p>
+    </div>
+    <div class="gallery-grid" id="gallery-grid"></div>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section id="links">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Handy links</span>
+      <h2>Around town</h2>
+      <p>Official and community sites worth bookmarking.</p>
+    </div>
+    <div class="links-grid reveal">
+      <a class="link-card" href="https://www.newportnh.gov/" target="_blank" rel="noopener noreferrer"><h3>Town of Newport</h3><p>Official town website: departments, notices, and services.</p><span>newportnh.gov →</span></a>
+      <a class="link-card" href="https://www.newportnh.gov/calendar/upcoming" target="_blank" rel="noopener noreferrer"><h3>Town calendar</h3><p>Selectboard, boards, and committee meetings.</p><span>newportnh.gov/calendar →</span></a>
+      <a class="link-card" href="https://richardsfreelib.org/" target="_blank" rel="noopener noreferrer"><h3>Richards Free Library</h3><p>Books, programs, digital library, and local archives.</p><span>richardsfreelib.org →</span></a>
+      <a class="link-card" href="https://newportnh.gov/1252/Newport-Opera-House" target="_blank" rel="noopener noreferrer"><h3>Newport Opera House</h3><p>The 1886 landmark on Main Street, still hosting performances.</p><span>newportnh.gov →</span></a>
+      <a class="link-card" href="https://newportfarmersmarketnh.com/" target="_blank" rel="noopener noreferrer"><h3>Newport Farmers Market</h3><p>Fridays on the Common, rain or shine, through the growing season.</p><span>newportfarmersmarketnh.com →</span></a>
+      <a class="link-card" href="https://www.newportnh.gov/home/events/36813" target="_blank" rel="noopener noreferrer"><h3>Concerts on the Common</h3><p>Free summer music on the Town Common.</p><span>newportnh.gov →</span></a>
+      <a class="link-card" href="https://www.visitnh.gov/things-to-do/events-calendar" target="_blank" rel="noopener noreferrer"><h3>Visit NH events</h3><p>Statewide festivals and happenings, including the Lake Sunapee region.</p><span>visitnh.gov →</span></a>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
     <div>The Sunshine Town — a community history &amp; news page for Newport, NH.</div>
-    <div>Historical facts adapted from public sources including the <a href="https://en.wikipedia.org/wiki/Newport,_New_Hampshire" target="_blank" rel="noopener">Wikipedia article on Newport, NH</a> and the Newport, NH town website.</div>
+    <div>Historical facts adapted from public sources including the <a href="https://en.wikipedia.org/wiki/Newport,_New_Hampshire" target="_blank" rel="noopener">Wikipedia article on Newport, NH</a> and the Newport, NH town website. Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.<span id="photo-credit"></span></div>
   </div>
 </footer>
 
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-close" id="lb-close" aria-label="Close">×</button>
+  <button class="lb-prev" id="lb-prev" aria-label="Previous photo">‹</button>
+  <button class="lb-next" id="lb-next" aria-label="Next photo">›</button>
+  <img id="lb-img" alt="">
+  <div class="cap" id="lb-cap"></div>
+</div>
+
 <script>
-  document.getElementById('dateline').textContent = new Date().toLocaleDateString('en-US', {
+(function(){
+  /* ---------- helpers ---------- */
+  var esc = function(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  };
+  var safeUrl = function(u){ return /^https?:\/\//i.test(u || '') ? u : ''; };
+  var $ = function(id){ return document.getElementById(id); };
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- season ---------- */
+  function seasonFor(d){
+    var m = d.getMonth(); // 0 = Jan
+    if (m === 11 || m <= 1) return 'winter';
+    if (m <= 4) return 'spring';
+    if (m <= 7) return 'summer';
+    return 'fall';
+  }
+  var qsSeason = new URLSearchParams(location.search).get('season'); // ?season=winter to preview
+  var now = new Date();
+  var season = ['fall','winter','spring','summer'].indexOf(qsSeason) > -1 ? qsSeason : seasonFor(now);
+  document.documentElement.setAttribute('data-season', season);
+
+  /* ---------- particles ---------- */
+  (function(){
+    if (reduceMotion) return;
+    var box = $('particles');
+    var count = season === 'winter' ? 26 : 16;
+    var html = '';
+    for (var i = 0; i < count; i++){
+      var size = season === 'winter' ? (4 + Math.random()*6) : (9 + Math.random()*9);
+      var drift = (Math.random() * 160 - 80).toFixed(0) + 'px';
+      html += '<span class="particle" style="--x:' + (Math.random()*100).toFixed(1) + '%;' +
+              '--size:' + size.toFixed(1) + 'px;' +
+              '--dur:' + (9 + Math.random()*9).toFixed(1) + 's;' +
+              '--delay:-' + (Math.random()*14).toFixed(1) + 's;' +
+              '--drift:' + drift + '"></span>';
+    }
+    box.innerHTML = html;
+  })();
+
+  /* ---------- dateline ---------- */
+  $('dateline').textContent = now.toLocaleDateString('en-US', {
     weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
 
-  function monthAbbr(d){ return d.toLocaleDateString('en-US',{month:'short'}).toUpperCase(); }
+  /* ---------- weather (Open-Meteo, no key) ---------- */
+  (function(){
+    var codes = {
+      0:['Clear','☀️'],1:['Mostly clear','🌤️'],2:['Partly cloudy','⛅'],3:['Overcast','☁️'],
+      45:['Fog','🌫️'],48:['Fog','🌫️'],
+      51:['Light drizzle','🌦️'],53:['Drizzle','🌦️'],55:['Heavy drizzle','🌧️'],56:['Freezing drizzle','🌧️'],57:['Freezing drizzle','🌧️'],
+      61:['Light rain','🌧️'],63:['Rain','🌧️'],65:['Heavy rain','🌧️'],66:['Freezing rain','🌧️'],67:['Freezing rain','🌧️'],
+      71:['Light snow','🌨️'],73:['Snow','❄️'],75:['Heavy snow','❄️'],77:['Snow grains','🌨️'],
+      80:['Showers','🌦️'],81:['Showers','🌧️'],82:['Heavy showers','⛈️'],
+      85:['Snow showers','🌨️'],86:['Heavy snow showers','❄️'],
+      95:['Thunderstorm','⛈️'],96:['Thunderstorm, hail','⛈️'],99:['Thunderstorm, hail','⛈️']
+    };
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=43.3651&longitude=-72.1734' +
+      '&current=temperature_2m,weather_code,wind_speed_10m' +
+      '&daily=temperature_2m_max,temperature_2m_min' +
+      '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York&forecast_days=1';
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 8000) : null;
+    fetch(url, ctrl ? {signal: ctrl.signal} : {})
+      .then(function(r){ if(!r.ok) throw new Error('weather ' + r.status); return r.json(); })
+      .then(function(d){
+        var c = d.current, dl = d.daily;
+        var info = codes[c.weather_code] || ['Conditions','🌡️'];
+        var hi = dl && dl.temperature_2m_max ? Math.round(dl.temperature_2m_max[0]) : null;
+        var lo = dl && dl.temperature_2m_min ? Math.round(dl.temperature_2m_min[0]) : null;
+        var el = $('weather');
+        el.innerHTML = info[1] + ' <b>' + Math.round(c.temperature_2m) + '°F</b> · ' + esc(info[0]) +
+          ' · wind ' + Math.round(c.wind_speed_10m) + ' mph' +
+          (hi !== null && lo !== null ? ' · H ' + hi + '° / L ' + lo + '°' : '');
+        el.hidden = false;
+      })
+      .catch(function(){ /* weather is a bonus: stay hidden on any failure */ })
+      .then(function(){ if (timer) clearTimeout(timer); });
+  })();
 
-  async function loadEvents(){
-    const status = document.getElementById('events-status');
-    const list = document.getElementById('events-list');
-    try{
-      const res = await fetch('events.json', {cache:'no-store'});
-      const data = await res.json();
-      status.textContent = 'Last updated: ' + (data.updated || 'unknown');
-      list.innerHTML = data.events.map(ev => {
-        const d = new Date(ev.date + 'T00:00:00');
-        return `<div class="event-card">
-          <div class="when"><span class="mon">${monthAbbr(d)}</span><span class="day">${d.getDate()}</span></div>
-          <div class="what">
-            <h3>${ev.title}</h3>
-            <div class="meta">${ev.time || ''} ${ev.location ? '· ' + ev.location : ''}</div>
-          </div>
-          <div class="tag">${ev.category || 'Town'}</div>
-        </div>`;
-      }).join('');
-    }catch(e){
-      status.textContent = "Couldn't load events.json yet — add events there to populate this section.";
-    }
+  /* ---------- From Newport's past (rotates daily) ---------- */
+  (function(){
+    var facts = [
+      ['1753', 'Newport is chartered and named "Grenville" after a British Prime Minister. The name changed later on.'],
+      ['1766', 'The first permanent families arrive from Killingworth, Connecticut, and start clearing land near today\'s town center.'],
+      ['1781', 'For a short stretch, Newport joined Vermont in a dispute with the New Hampshire government. The union was dissolved the following year.'],
+      ['1813', 'Colonel James Wolcott opens Newport\'s first cotton mill, a sign of the industry the Sugar River would power for generations.'],
+      ['1823', 'South Congregational Church is built, designed by Elias Carter. It still anchors the town.'],
+      ['1840s', 'By the mid-1800s, more than a hundred water wheels were turning along the Sugar River and its branches.'],
+      ['1842', 'The Sibley Scythe Company is founded. Its tools were later used in building the Panama Canal.'],
+      ['1886', 'The Newport Opera House opens inside the rebuilt Town Hall and Courthouse on Main Street.'],
+      ['1898', 'The Richards Free Library is established, a gift to the town from Col. Seth Mason Richards.'],
+      ['1961', 'Newport celebrates its bicentennial with a full week of festivities.'],
+      ['Now', 'Newport is the county seat of Sullivan County, and the Friday Farmers Market still fills the Town Common through the growing season.'],
+      ['Sugar River', 'Mill owners built a dam to keep water power flowing even through drought, a big reason the river became the town\'s engine.']
+    ];
+    var start = new Date(now.getFullYear(), 0, 0);
+    var dayOfYear = Math.floor((now - start) / 86400000);
+    var f = facts[dayOfYear % facts.length];
+    $('past-year').textContent = f[0];
+    $('past-text').textContent = f[1];
+  })();
+
+  /* ---------- events ---------- */
+  function startOfToday(){ return new Date(now.getFullYear(), now.getMonth(), now.getDate()); }
+  function loadEvents(){
+    var status = $('events-status'), list = $('events-list');
+    fetch('events.json', {cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('events ' + r.status); return r.json(); })
+      .then(function(data){
+        var today = startOfToday();
+        var events = (data.events || [])
+          .filter(function(ev){ return ev && ev.category !== 'system' && ev.date; })
+          .map(function(ev){ ev._d = new Date(ev.date + 'T00:00:00'); return ev; })
+          .filter(function(ev){ return !isNaN(ev._d) && ev._d >= today; })
+          .sort(function(a,b){ return a._d - b._d; });
+        status.textContent = data.updated ? 'Last updated: ' + data.updated : '';
+        if (!events.length){
+          list.innerHTML = '<div class="empty-note">No upcoming events are listed right now. Check the town calendar in the Around Town section below.</div>';
+          return;
+        }
+        list.innerHTML = events.map(function(ev){
+          var diff = Math.round((ev._d - today) / 86400000);
+          var rel = diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : '';
+          var mon = ev._d.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+          var meta = [ev.time, ev.location].filter(Boolean).map(esc).join(' · ');
+          return '<div class="event-card reveal' + (diff <= 1 ? ' soon' : '') + '">' +
+            '<div class="when"><span class="mon">' + mon + '</span><span class="day">' + ev._d.getDate() + '</span></div>' +
+            '<div class="what"><h3>' + esc(ev.title) + (rel ? '<span class="rel">' + rel + '</span>' : '') + '</h3>' +
+            '<div class="meta">' + meta + '</div></div>' +
+            '<div class="tag">' + esc(ev.category || 'Town') + '</div></div>';
+        }).join('');
+        observeReveals();
+      })
+      .catch(function(){
+        status.textContent = '';
+        list.innerHTML = '<div class="empty-note">Events are taking a break. Please check back soon.</div>';
+      });
   }
 
-  async function loadNews(){
-    const status = document.getElementById('news-status');
-    const list = document.getElementById('news-list');
-    try{
-      const res = await fetch('news.json', {cache:'no-store'});
-      const data = await res.json();
-      status.textContent = 'Last updated: ' + (data.updated || 'unknown');
-      list.innerHTML = data.items.map(it => `
-        <div class="news-item">
-          <div class="ts">${it.date}<br><span class="source-tag">${it.source || ''}</span></div>
-          <div>
-            <h3>${it.headline}</h3>
-            <p>${it.summary}</p>
-            ${it.link ? `<a class="read-more" href="${it.link}" target="_blank" rel="noopener noreferrer">Read full story at ${it.source || 'source'} →</a>` : ''}
-          </div>
-        </div>`).join('');
-    }catch(e){
-      status.textContent = "Couldn't load news.json yet — add stories there to populate this section.";
-    }
+  /* ---------- news ---------- */
+  function loadNews(){
+    var status = $('news-status'), list = $('news-list');
+    fetch('news.json', {cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('news ' + r.status); return r.json(); })
+      .then(function(data){
+        var items = (data.items || []).filter(function(it){ return it && it.source !== 'system'; });
+        status.textContent = data.updated ? 'Last updated: ' + data.updated : '';
+        if (!items.length){
+          list.innerHTML = '<div class="empty-note">No headlines right now. Check back tomorrow.</div>';
+          return;
+        }
+        list.innerHTML = items.map(function(it){
+          var d = new Date(it.date);
+          var dateStr = isNaN(d) ? esc(it.date || '') : d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+          var headline = it.headline || '';
+          var summary = (it.summary || '').trim();
+          // Google News summaries just repeat the headline; skip those.
+          var dup = summary && summary.toLowerCase().indexOf(headline.toLowerCase().slice(0, 30)) === 0;
+          var link = safeUrl(it.link);
+          return '<div class="news-item reveal">' +
+            '<div class="ts">' + dateStr + '<br><span class="source-tag">' + esc(it.source || '') + '</span></div>' +
+            '<div><h3>' + esc(headline) + '</h3>' +
+            (summary && !dup ? '<p>' + esc(summary) + '</p>' : '') +
+            (link ? '<a class="read-more" href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">Read full story' +
+              (it.source ? ' at ' + esc(it.source) : '') + ' →</a>' : '') +
+            '</div></div>';
+        }).join('');
+        observeReveals();
+      })
+      .catch(function(){
+        status.textContent = '';
+        list.innerHTML = '<div class="empty-note">News is taking a break. Please check back soon.</div>';
+      });
   }
 
+  /* ---------- gallery ---------- */
+  var photos = [], lbIndex = 0;
+  function loadGallery(){
+    fetch('photos.json', {cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('photos ' + r.status); return r.json(); })
+      .then(function(data){
+        var listed = (data.photos || []).filter(function(p){ return p && p.src && !/^(javascript|data):/i.test(p.src); });
+        if (!listed.length) return;
+        // Only show photos whose image file actually loads, so a photo listed
+        // before it has been uploaded never leaves a broken tile.
+        return Promise.all(listed.map(function(p){
+          return new Promise(function(resolve){
+            var im = new Image();
+            im.onload = function(){ resolve(p); };
+            im.onerror = function(){ resolve(null); };
+            im.src = p.src;
+          });
+        })).then(function(results){
+          photos = results.filter(Boolean);
+          if (!photos.length) return;
+          $('gallery').hidden = false;
+          $('nav-gallery').hidden = false;
+          $('gallery-grid').innerHTML = photos.map(function(p, i){
+            return '<figure class="reveal" data-i="' + i + '" tabindex="0" role="button" aria-label="' + esc(p.caption || 'Open photo') + '">' +
+              '<img loading="lazy" src="' + esc(p.src) + '" alt="' + esc(p.caption || 'Newport, NH') + '">' +
+              (p.caption ? '<figcaption>' + esc(p.caption) + '</figcaption>' : '') + '</figure>';
+          }).join('');
+          if (data.footer_credit) $('photo-credit').textContent = ' ' + data.footer_credit;
+          observeReveals();
+        });
+      })
+      .catch(function(){ /* no photos yet: gallery stays hidden */ });
+  }
+  function showPhoto(i){
+    if (!photos.length) return;
+    lbIndex = (i + photos.length) % photos.length;
+    var p = photos[lbIndex];
+    $('lb-img').src = p.src;
+    $('lb-img').alt = p.caption || 'Newport, NH';
+    $('lb-cap').innerHTML = esc(p.caption || '') + (p.credit ? '<small>Photo: ' + esc(p.credit) + '</small>' : '');
+    $('lightbox').classList.add('open');
+  }
+  function closeLb(){ $('lightbox').classList.remove('open'); }
+  $('gallery-grid').addEventListener('click', function(e){
+    var fig = e.target.closest('figure'); if (fig) showPhoto(+fig.getAttribute('data-i'));
+  });
+  $('gallery-grid').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){
+      var fig = e.target.closest('figure');
+      if (fig){ e.preventDefault(); showPhoto(+fig.getAttribute('data-i')); }
+    }
+  });
+  $('lb-close').addEventListener('click', closeLb);
+  $('lb-prev').addEventListener('click', function(){ showPhoto(lbIndex - 1); });
+  $('lb-next').addEventListener('click', function(){ showPhoto(lbIndex + 1); });
+  $('lightbox').addEventListener('click', function(e){ if (e.target === this) closeLb(); });
+  document.addEventListener('keydown', function(e){
+    if (!$('lightbox').classList.contains('open')) return;
+    if (e.key === 'Escape') closeLb();
+    if (e.key === 'ArrowLeft') showPhoto(lbIndex - 1);
+    if (e.key === 'ArrowRight') showPhoto(lbIndex + 1);
+  });
+
+  /* ---------- scroll reveal ---------- */
+  var io = null;
+  function observeReveals(){
+    var els = document.querySelectorAll('.reveal:not(.in)');
+    if (!('IntersectionObserver' in window) || reduceMotion){
+      els.forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    if (!io){
+      io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+        });
+      }, {threshold:0.08});
+    }
+    els.forEach(function(el){ io.observe(el); });
+  }
+
+  observeReveals();
   loadEvents();
   loadNews();
+  loadGallery();
+})();
 </script>
 
 </body>

@@ -1,0 +1,55 @@
+{
+  "footer_credit": "Historic photographs: David Lewis Yale, 1921, courtesy of the Richards Free Library Archives & Special Collections.",
+  "photos": [
+    {
+      "src": "photos/main-street-south-1921.jpg",
+      "caption": "The south part of Main Street, from the Bell place, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/main-street-north-1921.jpg",
+      "caption": "The north part of Main Street, from the Bell place, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/pollards-mills-dam-1921.jpg",
+      "caption": "The dam across the Sugar River at Pollard's Mills, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/pollards-mills-panorama-1921.jpg",
+      "caption": "Pollard's Mills from a hill to the southwest, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/sugar-river-bank-1921.jpg",
+      "caption": "Chester Pollard and friends on the bank of the Sugar River, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/north-newport-band-stand-1921.jpg",
+      "caption": "The North Newport band stand, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/north-newport-schoolhouse-1921.jpg",
+      "caption": "North Newport, showing the schoolhouse and chapel, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/story-farm-1921.jpg",
+      "caption": "The Story farm, seen from the Coutermarsh house in North Newport, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/jim-cutts-buggy-1921.jpg",
+      "caption": "Jim Cutts and his buggy, seen from the ledge, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    },
+    {
+      "src": "photos/golf-club-1921.jpg",
+      "caption": "The John H. Cain golf club, with plains and schoolhouse, 1921",
+      "credit": "David Lewis Yale, 1921 · Richards Free Library Archives & Special Collections"
+    }
+  ]
+}
